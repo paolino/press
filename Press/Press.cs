@@ -69,6 +69,40 @@ public class Press
     }
 
     /// <summary>
+    /// Remove a tool from the press
+    /// </summary>
+    public Problems Remove(RecipeItem item)
+    {
+        int index = Tools.FindIndex(y => y.Name == item.Name && y.Position == item.Position);
+        if (index < 0) return Problems.ToolNotFound;
+        Tools.RemoveAt(index);
+        return Problems.NoProblem;
+    }
+
+    public Problems RemoveByPosition(int position)
+    {
+        int index = Tools.FindIndex(y => y.Position == position);
+        if (index < 0) return Problems.ToolNotFound;
+        Tools.RemoveAt(index);
+        return Problems.NoProblem;
+    }
+
+    public Problems RemoveFirstByName(string name)
+    {
+        int index = Tools.FindIndex(y => y.Name == name);
+        if (index < 0) return Problems.ToolNotFound;
+        Tools.RemoveAt(index);
+        return Problems.NoProblem;
+    }
+
+    public Problems RemoveByIndex(int index)
+    {
+        if (index < 0 || index >= Tools.Count) return Problems.ToolNotFound;
+        Tools.RemoveAt(index);
+        return Problems.NoProblem;
+    }
+
+    /// <summary>
     /// Find a place for a tool of given width
     /// </summary>
     /// <param name="width"></param>
