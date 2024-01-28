@@ -16,6 +16,21 @@ public class Tool(string name, int width)
 {
     public string Name { get; set; } = name;
     public int Width { get; set; } = width;
+
+    public override string ToString()
+    {
+        return $"{Name}:{Width}";
+    }
+    public override bool Equals(object? obj)
+    {
+        return obj is Tool tool &&
+               Name == tool.Name &&
+               Width == tool.Width;
+    }
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Name, Width);
+    }
 }
 
 /// <summary>
@@ -24,6 +39,22 @@ public class Tool(string name, int width)
 public class Placed(Tool tool, int position) : Tool(tool.Name, tool.Width)
 {
     public int Position { get; } = position;
+    public override string ToString()
+    {
+        return $"{Name}:{Width}@{Position}";
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is Placed placed &&
+               Name == placed.Name &&
+               Width == placed.Width &&
+               Position == placed.Position;
+    }
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Name, Width, Position);
+    }
 }
 
 /// <summary>
@@ -48,7 +79,7 @@ public class Press
     /// <returns>
     /// true if the tool was inserted
     /// false if the tool could not be inserted
-    ///
+    /// </returns>
     public Problems Insert(Placed tool)
     {
         int index = Tools.FindIndex(y => y.Position > tool.Position);
@@ -83,7 +114,7 @@ public class Press
     /// true if all tools were inserted
     /// false as soon as one tool could not be inserted
     /// </returns>
-    public Problems InsertTools(List<Placed> tools)
+    public Problems Insert(List<Placed> tools)
     {
         foreach (Placed tool in tools)
             switch (Insert(tool))
@@ -275,6 +306,6 @@ public class Machine
             }
             placed.Add(tool!);
         }
-        return Press.InsertTools(placed);
+        return Press.Insert(placed);
     }
 }

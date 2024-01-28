@@ -91,4 +91,31 @@ public class MyTestClass
             (machineStorage.SequenceEqual(machine.Storage.ToolStorages())
             , "The storage should be restored");
     }
+
+    [Test]
+    public void AssertPressIsOrdered()
+    {
+        List<ToolStorage> machineStorage =
+            [
+            new ToolStorage(tA, 2),
+            ];
+        List<RecipeItem> recipeItems =
+            [
+            new RecipeItem("A", 10),
+            new RecipeItem("A", 0),
+            ];
+        Recipe recipe = new(recipeItems);
+        Machine machine = new(machineStorage);
+        Problems loadResult = machine.LoadRecipe(recipe);
+        Assert.That
+            (Problems.NoProblem == loadResult
+            , "The recipe should be loaded");
+        Assert.That
+            (machine.Press.Tools.SequenceEqual
+                ([
+                new Placed(tA, 0),
+                new Placed(tA, 10),
+                ])
+            , "The press should be ordered");
+    }
 }
