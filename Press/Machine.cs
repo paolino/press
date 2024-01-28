@@ -35,16 +35,24 @@ public class Machine
     /// </returns>
     public Problems LoadRecipe(Recipe recipe)
     {
-        List<Placed> placed = [];
         foreach (RecipeItem item in recipe.Items)
-        {
-            switch (Storage.Place(item.Name, item.Position, out Placed? tool))
+            switch (Insert(item))
             {
                 case Problems.NotEnoughTools:
                     return Problems.NotEnoughTools;
+                case Problems.OverlappingTools:
+                    return Problems.OverlappingTools;
             }
-            placed.Add(tool!);
+        return Problems.NoProblem;
+    }
+
+    public Problems Insert(RecipeItem item)
+    {
+        switch (Storage.Place(item.Name, item.Position, out Placed? tool))
+        {
+            case Problems.NotEnoughTools:
+                return Problems.NotEnoughTools;
         }
-        return Press.Insert(placed);
+        return Press.Insert(tool!);
     }
 }
