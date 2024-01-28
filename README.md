@@ -1,0 +1,3 @@
+# run tests
+
+> dotnet test
