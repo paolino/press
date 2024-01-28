@@ -12,13 +12,11 @@ public class MyTestClass
     public void TestNoProblem()
     {
         List<ToolStorage> machineStorage =
-            [
-            new ToolStorage(tA, 2),
+            [ new(tA, 2)
             ];
         List<RecipeItem> recipeItems =
-            [
-            new RecipeItem("A", 0),
-            new RecipeItem("A", 10),
+            [ new("A", 0)
+            , new("A", 10)
             ];
         Recipe recipe = new(recipeItems);
         Machine machine = new(machineStorage);
@@ -32,13 +30,11 @@ public class MyTestClass
     public void AssertNotEnoughTools()
     {
         List<ToolStorage> machineStorage =
-            [
-            new ToolStorage(tA, 1),
+            [ new(tA, 1)
             ];
         List<RecipeItem> recipeItems =
-            [
-            new RecipeItem("A", 0),
-            new RecipeItem("A", 0),
+            [ new("A", 0)
+            , new("A", 0)
             ];
         Recipe recipe = new(recipeItems);
         Machine machine = new(machineStorage);
@@ -53,12 +49,12 @@ public class MyTestClass
 
         List<ToolStorage> machineStorage =
             [
-            new ToolStorage(tA, 2),
+            new(tA, 2),
             ];
         List<RecipeItem> recipeItems =
             [
-            new RecipeItem("A", 0),
-            new RecipeItem("A", 9),
+            new("A", 0),
+            new("A", 9),
             ];
         Recipe recipe = new(recipeItems);
         Machine machine = new(machineStorage);
@@ -72,13 +68,11 @@ public class MyTestClass
     public void ClearMachineRestoreTheStorage()
     {
         List<ToolStorage> machineStorage =
-            [
-            new ToolStorage(tA, 2),
+            [ new(tA, 2)
             ];
         List<RecipeItem> recipeItems =
-            [
-            new RecipeItem("A", 0),
-            new RecipeItem("A", 10),
+            [ new("A", 0)
+            , new("A", 10)
             ];
         Recipe recipe = new(recipeItems);
         Machine machine = new(machineStorage);
@@ -96,13 +90,11 @@ public class MyTestClass
     public void AssertPressIsOrdered()
     {
         List<ToolStorage> machineStorage =
-            [
-            new ToolStorage(tA, 2),
+            [ new(tA, 2)
             ];
         List<RecipeItem> recipeItems =
-            [
-            new RecipeItem("A", 10),
-            new RecipeItem("A", 0),
+            [ new("A", 10)
+            , new("A", 0)
             ];
         Recipe recipe = new(recipeItems);
         Machine machine = new(machineStorage);
@@ -113,8 +105,8 @@ public class MyTestClass
         Assert.That
             (machine.Press.Tools.SequenceEqual
                 ([
-                new Placed(tA, 0),
-                new Placed(tA, 10),
+                new(tA, 0),
+                new(tA, 10),
                 ])
             , "The press should be ordered");
     }
