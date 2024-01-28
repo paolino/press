@@ -1,3 +1,5 @@
+namespace Press;
+
 /// <summary>
 /// A recipeItem is the name of a tool and its position
 /// </summary>

@@ -1,3 +1,4 @@
+namespace Press;
 
 /// <summary>
 /// A tool is a thing that can has a name and a width

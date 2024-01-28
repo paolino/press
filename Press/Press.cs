@@ -1,8 +1,4 @@
-﻿
-
-
-
-
+﻿namespace Press;
 
 /// <summary>
 /// A press is a list of placed tools, that are always sorted by position
@@ -70,5 +66,16 @@ public class Press
                     return Problems.OverlappingTools;
             }
         return Problems.NoProblem;
+    }
+
+    public int FindPlace(int width)
+    {
+        int position = 0;
+        foreach (Placed tool in Tools)
+        {
+            if (position + width <= tool.Position) return position;
+            position = tool.Position + tool.Width;
+        }
+        return position;
     }
 }

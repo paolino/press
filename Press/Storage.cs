@@ -1,4 +1,7 @@
+namespace Press;
+
 /// <summary>
+///
 /// A toolStorage is a tool and a quantity
 /// </summary>
 public class ToolStorage(Tool tool, int quantity) : Tool(tool.Name, tool.Width)

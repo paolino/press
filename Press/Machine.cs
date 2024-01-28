@@ -1,5 +1,5 @@
 
-
+namespace Press;
 
 /// <summary>
 /// A machine is a storage and a press

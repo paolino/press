@@ -1,6 +1,7 @@
 namespace Press.Tests;
+
 [TestFixture]
-public class MyTestClass
+public class MachineTest
 {
 
     Tool tA = new(name: "A", width: 10);
