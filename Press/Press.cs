@@ -68,6 +68,13 @@ public class Press
         return Problems.NoProblem;
     }
 
+    /// <summary>
+    /// Find a place for a tool of given width
+    /// </summary>
+    /// <param name="width"></param>
+    /// <returns>
+    /// The first position where the tool can be placed
+    ///
     public int FindPlace(int width)
     {
         int position = 0;
@@ -77,5 +84,15 @@ public class Press
             position = tool.Position + tool.Width;
         }
         return position;
+    }
+
+    /// <summary>
+    /// Insert a tool in the press where possible
+    /// </summary>
+    public int InsertWherePossible(Tool tool)
+    {
+        int place = FindPlace(tool.Width);
+        Insert(new Placed(tool, place));
+        return place;
     }
 }
