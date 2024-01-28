@@ -95,4 +95,15 @@ public class Press
         Insert(new Placed(tool, place));
         return place;
     }
+
+    /// <summary>
+    /// Export a recipe that represent the press
+    /// </summary>
+    public Recipe ExportRecipe()
+    {
+        List<RecipeItem> items = [];
+        foreach (Placed tool in Tools)
+            items.Add(new RecipeItem(tool.Name, tool.Position));
+        return new Recipe(items);
+    }
 }

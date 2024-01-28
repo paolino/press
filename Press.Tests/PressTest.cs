@@ -109,3 +109,58 @@ public class PressTestInsertWherePossible
         Assert.That(press.Tools[press.Tools.FindIndex(t => t.Name == "B")].Position == 0, "The tool position is 0");
     }
 }
+
+[TestFixture]
+public class PressTestExportRecipe
+{
+
+        Tool tA = new(name: "A", width: 10);
+        Tool tB = new(name: "B", width: 30);
+        Tool tC = new(name: "C", width: 20);
+        [Test]
+        public void CanExportEmptyPress()
+        {
+            Press press = new();
+            Recipe recipe = press.ExportRecipe();
+            Assert.That(recipe.Items.Count == 0, "The recipe is empty");
+        }
+
+        [Test]
+        public void CanExportPressWithOneTool()
+        {
+            Press press = new();
+            press.Insert(new Placed (tA,0));
+            Recipe recipe = press.ExportRecipe();
+            Assert.That(recipe.Items.Count == 1, "The recipe has one item");
+            Assert.That(recipe.Items[0].Name == "A", "The recipe has one item named A");
+            Assert.That(recipe.Items[0].Position == 0, "The recipe has one item at position 0");
+        }
+
+        [Test]
+        public void CanExportPressWithTwoTools()
+        {
+            Press press = new();
+            press.Insert(new Placed (tA,10));
+            press.Insert(new Placed (tA,0));
+            Recipe recipe = press.ExportRecipe();
+            Assert.That(recipe.Items.Count == 2, "The recipe has two items");
+            Assert.That(recipe.Items[0].Name == "A", "The recipe has one item named A");
+            Assert.That(recipe.Items[0].Position == 0, "The recipe has one item at position 0");
+            Assert.That(recipe.Items[1].Name == "A", "The recipe has one item named A");
+            Assert.That(recipe.Items[1].Position == 10, "The recipe has one item at position 10");
+        }
+
+    [Test]
+    public void CanExportPressWithTwoToolsOfDifferentWidth()
+    {
+        Press press = new();
+        press.Insert(new Placed(tA, 0));
+        press.Insert(new Placed(tB, 15));
+        Recipe recipe = press.ExportRecipe();
+        Assert.That(recipe.Items.Count == 2, "The recipe has two items");
+        Assert.That(recipe.Items[0].Name == "A", "The recipe has one item named A");
+        Assert.That(recipe.Items[0].Position == 0, "The recipe has one item at position 0");
+        Assert.That(recipe.Items[1].Name == "B", "The recipe has one item named B");
+        Assert.That(recipe.Items[1].Position == 15, "The recipe has one item at position 10");
+    }
+}
