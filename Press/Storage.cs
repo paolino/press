@@ -72,9 +72,10 @@ public class Storage
 
     public override String? ToString()
     {
-        String output = "";
+        String output = "Storage:[";
         foreach (ToolStorage toolStorage in Tools.Values)
-            output += "[" + toolStorage.ToString() + "]";
+            output += toolStorage.ToString() + ", ";
+        output += "]";
         return output;
     }
 
@@ -96,19 +97,17 @@ public class Storage
     /// true if the tool was placed
     /// false if the tool could not be placed
     /// </returns>
-    public Problems Place(String key, int position, out Placed? placed)
+    public Placed Place(String key, int position)
     {
-        placed = null;
         if (Tools.TryGetValue(key, out ToolStorage? old))
         {
             int quantity = old.Quantity;
-            if (quantity < 1) return Problems.NotEnoughTools;
+            if (quantity < 1) throw new NotEnoughTools();
             ToolStorage newToolStorage = old.Update(-1);
             Tools[key] = newToolStorage;
-            placed = new Placed(newToolStorage, position);
-            return Problems.NoProblem;
+            return new Placed(newToolStorage, position);
         }
-        return Problems.NotEnoughTools;
+        throw new NotEnoughTools();
     }
 
 }

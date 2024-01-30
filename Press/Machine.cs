@@ -1,4 +1,8 @@
 
+using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
+
 namespace Press;
 
 /// <summary>
@@ -33,26 +37,62 @@ public class Machine
     /// <returns>
     /// true if the recipe was loaded
     /// </returns>
-    public Problems LoadRecipe(Recipe recipe)
+    ///
+
+
+    public Problems Load(Recipe recipe)
     {
-        foreach (RecipeItem item in recipe.Items)
-            switch (Insert(item))
-            {
-                case Problems.NotEnoughTools:
-                    return Problems.NotEnoughTools;
-                case Problems.OverlappingTools:
-                    return Problems.OverlappingTools;
-            }
+        void Place(Recipe recipe)
+        {
+            foreach (RecipeItem item in recipe.Items)
+                Load(item);
+        }
+        return Catch(() => Place(recipe));
+    }
+
+    private void Load(RecipeItem item)
+    {
+            Placed placed = Storage.Place(item.Name, item.Position);
+            Press.Insert(placed);
+    }
+
+    public Problems UnloadByPosition(int position)
+    {
+        void Unload(int position)
+        {
+            Placed placed = Press.RemoveByPosition(position);
+            Storage.Store(new ToolStorage(placed!, 1));
+        }
+        return Catch(() => Unload(position));
+    }
+    /// <summary>
+    /// run a press or storage action and catch the exceptions as problems
+    /// </summary>
+    /// <param name="func"></param>
+    /// <returns></returns>
+    private static Problems Catch(Action  func)
+    {
+        try
+        {
+            func();
+        }
+        catch (OverlappingTools)
+        {
+            return Problems.OverlappingTools;
+        }
+        catch (NotEnoughTools)
+        {
+            return Problems.NotEnoughTools;
+        }
+        catch (ToolNotFound)
+        {
+            return Problems.ToolNotFound;
+        }
         return Problems.NoProblem;
     }
 
-    public Problems Insert(RecipeItem item)
+    public override string ToString()
     {
-        switch (Storage.Place(item.Name, item.Position, out Placed? tool))
-        {
-            case Problems.NotEnoughTools:
-                return Problems.NotEnoughTools;
-        }
-        return Press.Insert(tool!);
+        return $"Machine:\n   {Storage}\n   {Press}";
     }
 }

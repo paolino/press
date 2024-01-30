@@ -21,4 +21,13 @@ public class RecipeItem
 public class Recipe(List<RecipeItem> items)
 {
     public List<RecipeItem> Items { get; } = items;
+
+    public override string ToString()
+    {
+        String result = "Recipe: [";
+        foreach (RecipeItem item in Items)
+            result += $"{item.Name}@{item.Position}, ";
+        result += "]";
+        return result;
+    }
 }

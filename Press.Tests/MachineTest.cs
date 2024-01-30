@@ -21,7 +21,7 @@ public class MachineTest
             ];
         Recipe recipe = new(recipeItems);
         Machine machine = new(machineStorage);
-        Problems loadResult = machine.LoadRecipe(recipe);
+        Problems loadResult = machine.Load(recipe);
         Assert.That
             (Problems.NoProblem == loadResult
             , "The recipe should be loaded");
@@ -35,11 +35,11 @@ public class MachineTest
             ];
         List<RecipeItem> recipeItems =
             [ new("A", 0)
-            , new("A", 0)
+            , new("A", 10)
             ];
         Recipe recipe = new(recipeItems);
         Machine machine = new(machineStorage);
-        Problems loadResult = machine.LoadRecipe(recipe);
+        Problems loadResult = machine.Load(recipe);
         Assert.That
             (loadResult == Problems.NotEnoughTools
             , "The recipe should not be loaded as there are not enough tools");
@@ -59,7 +59,7 @@ public class MachineTest
             ];
         Recipe recipe = new(recipeItems);
         Machine machine = new(machineStorage);
-        Problems loadResult = machine.LoadRecipe(recipe);
+        Problems loadResult = machine.Load(recipe);
         Assert.That
             (loadResult == Problems.OverlappingTools
             , "The recipe should not be loaded as there are overlapping tools");
@@ -77,7 +77,7 @@ public class MachineTest
             ];
         Recipe recipe = new(recipeItems);
         Machine machine = new(machineStorage);
-        Problems loadResult = machine.LoadRecipe(recipe);
+        Problems loadResult = machine.Load(recipe);
         Assert.That
             (Problems.NoProblem == loadResult
             , "The recipe should be loaded");
@@ -99,7 +99,7 @@ public class MachineTest
             ];
         Recipe recipe = new(recipeItems);
         Machine machine = new(machineStorage);
-        Problems loadResult = machine.LoadRecipe(recipe);
+        Problems loadResult = machine.Load(recipe);
         Assert.That
             (Problems.NoProblem == loadResult
             , "The recipe should be loaded");
@@ -114,56 +114,64 @@ public class MachineTest
 }
 
 [TestFixture]
-public class MachineTestsInsert
+public class MachineTestsMultipleRecipes
 {
     Tool tA = new(name: "A", width: 10);
     Tool tB = new(name: "B", width: 30);
     Tool tC = new(name: "C", width: 20);
 
     [Test]
-    public void AssertInsert()
+    public void AssertLoad2RecipesWorks()
     {
-        List<ToolStorage> machineStorage =
-            [ new(tA, 2)
-            ];
+        List<ToolStorage> machineStorage = [ new(tA, 2) ];
+        List<RecipeItem> recipeItems1 = [ new("A", 0) ];
         Machine machine = new(machineStorage);
-        Problems insertResult = machine.Insert(new RecipeItem("A", 0));
+        Recipe recipe = new(recipeItems1);
+        Problems loadResult = machine.Load(recipe);
         Assert.That
-            (Problems.NoProblem == insertResult
+            (Problems.NoProblem == loadResult
+            , "The tool should be inserted");
+        List<RecipeItem> recipeItems2 = [ new("A", 10) ];
+        Recipe recipe2 = new(recipeItems2);
+        loadResult = machine.Load(recipe2);
+        Assert.That
+            (Problems.NoProblem == loadResult
             , "The tool should be inserted");
     }
 
     [Test]
     public void AssertInsertNotEnoughTools()
     {
-        List<ToolStorage> machineStorage =
-            [ new(tA, 1)
-            ];
+        List<ToolStorage> machineStorage = [ new(tA, 1) ];
+        List<RecipeItem> recipeItems = [ new("A", 0) ];
         Machine machine = new(machineStorage);
-        Problems insertResult = machine.Insert(new RecipeItem("A", 0));
+        Recipe recipe = new(recipeItems);
+        Problems loadResult = machine.Load(recipe);
         Assert.That
-            (Problems.NoProblem == insertResult
+            (Problems.NoProblem == loadResult
             , "The tool should be inserted");
-        insertResult = machine.Insert(new RecipeItem("A", 0));
+        loadResult = machine.Load(recipe);
         Assert.That
-            (Problems.NotEnoughTools == insertResult
+            (Problems.NotEnoughTools == loadResult
             , "The tool should not be inserted as there are not enough tools");
     }
 
     [Test]
     public void AssertInsertOverlappingTools()
     {
-        List<ToolStorage> machineStorage =
-            [ new(tA, 2)
-            ];
+        List<ToolStorage> machineStorage = [ new(tA, 2) ];
+        List<RecipeItem> recipeItems1 = [ new("A", 0)];
         Machine machine = new(machineStorage);
-        Problems insertResult = machine.Insert(new RecipeItem("A", 0));
+        Recipe recipe1 = new(recipeItems1);
+        Problems loadResult = machine.Load(recipe1);
         Assert.That
-            (Problems.NoProblem == insertResult
+            (Problems.NoProblem == loadResult
             , "The tool should be inserted");
-        insertResult = machine.Insert(new RecipeItem("A", 9));
+        List<RecipeItem> recipeItems2 = [ new("A", 9)];
+        Recipe recipe2 = new(recipeItems2);
+        loadResult = machine.Load(recipe2);
         Assert.That
-            (Problems.OverlappingTools == insertResult
+            (Problems.OverlappingTools == loadResult
             , "The tool should not be inserted as there are overlapping tools");
     }
 }

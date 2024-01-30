@@ -1,5 +1,4 @@
 namespace Press;
-
 public enum Problems
 {
     NotEnoughTools,
@@ -7,3 +6,19 @@ public enum Problems
     NoProblem,
     ToolNotFound,
 }
+
+
+public class NotEnoughTools : Exception
+{
+    public NotEnoughTools() {}
+}
+
+public class OverlappingTools : Exception
+    {
+        public OverlappingTools() {}
+    }
+
+public class ToolNotFound : Exception
+    {
+        public ToolNotFound() {}
+    }

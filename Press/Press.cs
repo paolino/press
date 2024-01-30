@@ -23,7 +23,7 @@ public class Press
     /// true if the tool was inserted
     /// false if the tool could not be inserted
     /// </returns>
-    public Problems Insert(Placed tool)
+    public void Insert(Placed tool)
     {
         int index = Tools.FindIndex(y => y.Position > tool.Position);
         if (index < 0) // no placed tool after this one
@@ -31,7 +31,7 @@ public class Press
             if (CheckPrev(tool, Tools.Count)) // respect the previous tool
             {
                 Tools.Add(tool);
-                return Problems.NoProblem;
+                return;
             }
         }
         else
@@ -42,11 +42,11 @@ public class Press
                 if (tool.Position + tool.Width <= next.Position)
                 {
                     Tools.Insert(index, tool);
-                    return Problems.NoProblem;
+                    return;
                 }
             }
         }
-        return Problems.OverlappingTools;
+        throw new OverlappingTools();
     }
 
     /// <summary>
@@ -57,49 +57,40 @@ public class Press
     /// true if all tools were inserted
     /// false as soon as one tool could not be inserted
     /// </returns>
-    public Problems Insert(List<Placed> tools)
+    public void Insert(List<Placed> tools)
     {
-        foreach (Placed tool in tools)
-            switch (Insert(tool))
-            {
-                case Problems.OverlappingTools:
-                    return Problems.OverlappingTools;
-            }
-        return Problems.NoProblem;
+        foreach (Placed tool in tools) Insert(tool);
     }
 
     /// <summary>
     /// Remove a tool from the press
     /// </summary>
-    public Problems Remove(RecipeItem item)
+    public Placed Remove(RecipeItem item)
     {
-        int index = Tools.FindIndex(y => y.Name == item.Name && y.Position == item.Position);
-        if (index < 0) return Problems.ToolNotFound;
-        Tools.RemoveAt(index);
-        return Problems.NoProblem;
+        int index = Tools.FindIndex
+            (y => y.Name == item.Name && y.Position == item.Position);
+        return RemoveByIndex(index);
     }
 
-    public Problems RemoveByPosition(int position)
+    public Placed RemoveByPosition(int position)
     {
         int index = Tools.FindIndex(y => y.Position == position);
-        if (index < 0) return Problems.ToolNotFound;
-        Tools.RemoveAt(index);
-        return Problems.NoProblem;
+        return RemoveByIndex(index);
     }
 
-    public Problems RemoveFirstByName(string name)
+    public Placed RemoveFirstByName(string name)
     {
         int index = Tools.FindIndex(y => y.Name == name);
-        if (index < 0) return Problems.ToolNotFound;
-        Tools.RemoveAt(index);
-        return Problems.NoProblem;
+        return RemoveByIndex(index);
     }
 
-    public Problems RemoveByIndex(int index)
+    public Placed RemoveByIndex(int index)
     {
-        if (index < 0 || index >= Tools.Count) return Problems.ToolNotFound;
+        if (index < 0 || index >= Tools.Count)
+            throw new ToolNotFound();
+        Placed tool = Tools[index];
         Tools.RemoveAt(index);
-        return Problems.NoProblem;
+        return tool;
     }
 
     /// <summary>
@@ -139,5 +130,15 @@ public class Press
         foreach (Placed tool in Tools)
             items.Add(new RecipeItem(tool.Name, tool.Position));
         return new Recipe(items);
+    }
+
+
+    public override String? ToString()
+    {
+        String output = "Press:[";
+        foreach (Placed placed in Tools)
+            output += placed.ToString() + ", ";
+        output += "]";
+        return output;
     }
 }

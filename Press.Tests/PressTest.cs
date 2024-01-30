@@ -76,7 +76,7 @@ public class PressTestInsertWherePossible
     public void CanInsertInPressWithOneTool()
     {
         Press press = new();
-        press.Insert(new Placed (tA,0));
+        press.Insert(new Placed(tA, 0));
         int place = press.InsertWherePossible(tB);
         Assert.That(place == 10, "There is space at 10 in a press with a tool at 0");
         Assert.That(press.Tools.Count == 2, "There are two tools in the press");
@@ -88,8 +88,8 @@ public class PressTestInsertWherePossible
     public void CanInsertInPressBetweenTwoTools()
     {
         Press press = new();
-        press.Insert(new Placed (tA,0));
-        press.Insert(new Placed (tA,40));
+        press.Insert(new Placed(tA, 0));
+        press.Insert(new Placed(tA, 40));
         int place = press.InsertWherePossible(tB);
         Assert.That(place == 10, "There is space at 10 in a press with a tool at 0 and 20");
         Assert.That(press.Tools.Count == 3, "There are three tools in the press");
@@ -101,13 +101,53 @@ public class PressTestInsertWherePossible
     public void CanInsertInPressAtPosition0()
     {
         Press press = new();
-        press.Insert(new Placed (tA,30));
+        press.Insert(new Placed(tA, 30));
         int place = press.InsertWherePossible(tB);
         Assert.That(place == 0, "There is space at 0 in a press with a tool at 30");
         Assert.That(press.Tools.Count == 2, "There are three tools in the press");
         Assert.That(press.Tools.FindIndex(t => t.Name == "B") == 0, "The tool is at index 0");
         Assert.That(press.Tools[press.Tools.FindIndex(t => t.Name == "B")].Position == 0, "The tool position is 0");
     }
+}
+
+[TestFixture]
+public class PressTestInsertThrows
+    {
+    Tool tA = new(name: "A", width: 10);
+    [Test]
+    public void CannotInsertWhereAToolIs()
+    {
+        Press press = new();
+        press.Insert(new Placed (tA,0));
+        Assert.Throws<OverlappingTools>(() => press.Insert(new Placed (tA,0)), "Cannot insert where a tool is");
+    }
+
+    [Test]
+    public void CannotInsertWhereAToolIs2()
+    {
+        Press press = new();
+        press.Insert(new Placed (tA,0));
+        Assert.Throws<OverlappingTools>(() => press.Insert(new Placed (tA,5)), "Cannot insert where a tool is");
+    }
+    [Test]
+    public void CannotInsertWhereAToolIs3()
+    {
+        Press press = new();
+        press.Insert(new Placed (tA,5));
+        Assert.Throws<OverlappingTools>(() => press.Insert(new Placed (tA,0)), "Cannot insert where a tool is");
+    }
+
+    [Test]
+    public void StopsInsertingABrokenRecipe()
+    {
+        Press press = new();
+        List<Placed> tools = [ new(tA, 0)
+                             , new(tA, 5)
+                             ];
+        Assert.Throws<OverlappingTools>(() => press.Insert(tools), "Cannot insert where a tool is");
+        Assert.That(press.Tools.Count == 1, "There is one tool in the press");
+    }
+
 }
 
 [TestFixture]
@@ -179,8 +219,9 @@ public class PressTestRemove
             press.Insert(new Placed (tA,0));
             press.Insert(new Placed (tA,10));
             press.Insert(new Placed (tA,20));
-            Problems result = press.RemoveByPosition(10);
-            Assert.That(result == Problems.NoProblem, "The tool was removed");
+            Placed removed = press.RemoveByPosition(10);
+            Assert.That(removed.Position == 10, "The removed tool position is 10");
+            Assert.That(removed.Name == "A", "The removed tool name is A");
             Assert.That(press.Tools.Count == 2, "There are two tools in the press");
             Assert.That(press.Tools.FindIndex(t => t.Name == "A") == 0, "The tool is at index 0");
             Assert.That(press.Tools[0].Position == 0, "The first tool position is 0");
@@ -196,8 +237,9 @@ public class PressTestRemove
         press.Insert(new Placed(tA, 0));
         press.Insert(new Placed(tA, 10));
         press.Insert(new Placed(tA, 20));
-        Problems result = press.RemoveFirstByName("A");
-        Assert.That(result == Problems.NoProblem, "The tool was removed");
+        Placed placed = press.RemoveFirstByName("A");
+        Assert.That(placed.Position == 0, "The removed tool position is 0");
+        Assert.That(placed.Name == "A", "The removed tool name is A");
         Assert.That(press.Tools.Count == 2, "There are two tools in the press");
         Assert.That(press.Tools[0].Position == 10, "The first tool position is 10");
         Assert.That(press.Tools[0].Name == "A", "The first tool name is A");
